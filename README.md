@@ -126,9 +126,24 @@
         }
 
         function finalizePurchase() {
-            if (Object.keys(cartItems).length === 0) {
-                alert('Seu carrinho está vazio!');
+    const qrCodeContainer = document.getElementById('qr-code');
+    qrCodeContainer.innerHTML = '<h2>Seu QR Code</h2>';
+    
+    QRCode.toCanvas(
+        qrCodeContainer,
+        "Teste de QR Code",
+        function (error, canvas) {
+            if (error) {
+                console.error(error);
+                alert('Erro ao gerar o QR Code.');
                 return;
+            }
+            qrCodeContainer.appendChild(canvas);
+        }
+    );
+}
+
+    );
             }
 
             const itemsList = Object.entries(cartItems)

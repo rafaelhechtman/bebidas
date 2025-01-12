@@ -140,7 +140,7 @@
 
             QRCode.toCanvas(
                 qrCodeContainer,
-                `data:text/plain;charset=utf-8,Itens escolhidos: ${itemsList}`,
+                JSON.stringify({ itens: cartItems }),
                 function (error, canvas) {
                     if (error) {
                         console.error(error);

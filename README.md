@@ -104,7 +104,7 @@
     </div>
 
     <script>
-        const cartItems = {};
+        const cartItems = {}; // Objeto para armazenar itens e quantidades
 
         function addToCart(item) {
             if (cartItems[item]) {
@@ -126,36 +126,17 @@
         }
 
         function finalizePurchase() {
-    const qrCodeContainer = document.getElementById('qr-code');
-    qrCodeContainer.innerHTML = '<h2>Seu QR Code</h2>';
-    
-    QRCode.toCanvas(
-        qrCodeContainer,
-        "Teste de QR Code",
-        function (error, canvas) {
-            if (error) {
-                console.error(error);
-                alert('Erro ao gerar o QR Code.');
+            if (Object.keys(cartItems).length === 0) {
+                alert('Seu carrinho está vazio!');
                 return;
             }
-            qrCodeContainer.appendChild(canvas);
-        }
-    );
-}
-
-    );
-            }
-
-            const itemsList = Object.entries(cartItems)
-                .map(([item, qty]) => `${item} (${qty})`)
-                .join(', ');
 
             const qrCodeContainer = document.getElementById('qr-code');
             qrCodeContainer.innerHTML = '<h2>Seu QR Code</h2>';
 
             QRCode.toCanvas(
                 qrCodeContainer,
-                JSON.stringify({ itens: cartItems }),
+                JSON.stringify(cartItems),
                 function (error, canvas) {
                     if (error) {
                         console.error(error);
@@ -165,8 +146,6 @@
                     qrCodeContainer.appendChild(canvas);
                 }
             );
-
-            alert('Compra finalizada! Escaneie o QR Code para ver os itens.');
         }
     </script>
 </body>

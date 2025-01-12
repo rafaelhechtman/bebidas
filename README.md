@@ -51,6 +51,10 @@
             margin-top: 20px;
             text-align: center;
         }
+        #cart ul {
+            list-style-type: none;
+            padding: 0;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
@@ -64,21 +68,23 @@
             <h2>Compre Bebidas</h2>
             <div class="menu-item">
                 <span>Cerveja - R$5</span>
-                <button class="btn" onclick="addToCart('Cerveja - R$5')">Adicionar ao Carrinho</button>
+                <button class="btn" onclick="addToCart('Cerveja')">Adicionar ao Carrinho</button>
             </div>
             <div class="menu-item">
                 <span>Vinho - R$8</span>
-                <button class="btn" onclick="addToCart('Vinho - R$8')">Adicionar ao Carrinho</button>
+                <button class="btn" onclick="addToCart('Vinho')">Adicionar ao Carrinho</button>
             </div>
             <div class="menu-item">
                 <span>Refrigerante - R$3</span>
-                <button class="btn" onclick="addToCart('Refrigerante - R$3')">Adicionar ao Carrinho</button>
+                <button class="btn" onclick="addToCart('Refrigerante')">Adicionar ao Carrinho</button>
             </div>
         </div>
 
         <div class="card">
             <h2>Seu Carrinho</h2>
-            <ul id="cart"></ul>
+            <div id="cart">
+                <ul></ul>
+            </div>
             <button class="btn" onclick="finalizePurchase()">Finalizar Compra</button>
         </div>
 
@@ -98,38 +104,50 @@
     </div>
 
     <script>
-        const cartItems = [];
+        const cartItems = {};
 
         function addToCart(item) {
-            cartItems.push(item);
+            if (cartItems[item]) {
+                cartItems[item]++;
+            } else {
+                cartItems[item] = 1;
+            }
             updateCartView();
         }
 
         function updateCartView() {
-            const cart = document.getElementById('cart');
+            const cart = document.getElementById('cart').querySelector('ul');
             cart.innerHTML = '';
-            cartItems.forEach((item, index) => {
+            Object.keys(cartItems).forEach(item => {
                 const li = document.createElement('li');
-                li.textContent = item;
+                li.textContent = `${item} (${cartItems[item]})`;
                 cart.appendChild(li);
             });
         }
 
         function finalizePurchase() {
-            if (cartItems.length === 0) {
+            if (Object.keys(cartItems).length === 0) {
                 alert('Seu carrinho está vazio!');
                 return;
             }
 
-            const itemsList = cartItems.join(', ');
+            const itemsList = Object.entries(cartItems)
+                .map(([item, qty]) => `${item} (${qty})`)
+                .join(', ');
+
             const qrCodeContainer = document.getElementById('qr-code');
             qrCodeContainer.innerHTML = '<h2>Seu QR Code</h2>';
 
             QRCode.toCanvas(
                 qrCodeContainer,
                 `data:text/plain;charset=utf-8,Itens escolhidos: ${itemsList}`,
-                function (error) {
-                    if (error) console.error(error);
+                function (error, canvas) {
+                    if (error) {
+                        console.error(error);
+                        alert('Erro ao gerar o QR Code.');
+                        return;
+                    }
+                    qrCodeContainer.appendChild(canvas);
                 }
             );
 
